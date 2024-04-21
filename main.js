@@ -1,104 +1,73 @@
-import './style.scss';
-import { removeLoaderUi, showLoaderUi } from './js/loader';
-import { createItemUi } from './js/item';
-import { addToCart, costTotal } from './js/cart';
-import * as bootstrap from 'bootstrap';
-import Swal from 'sweetalert2';
+import './style.scss'
 
-// type = module ရဲ့ Variable ကို Console မှပြန်ခေါ်ရင် Browser console မှ မသိနိုင်ပါ
-export let items = [];
+document.addEventListener('DOMContentLoaded', function() {
 
-//ဒါမျိုးရေးမှရမည်
-// window.items = [];
+  let dataList = [];
 
-export const itemRow = document.querySelector(".item-row");
-export const cartBtn = document.querySelector(".cart-btn");
-export const cartCounter = document.querySelector(".cart-counter");
-export const cartNumber = document.querySelector(".cart-number");
-export const cartBox = document.querySelector("#cartBox");
-export const total = document.querySelector("#total");
-export const printBtn = document.querySelector(".printBtn");
-export const delAllBtn = document.querySelector("#delAllBtn");
+  async function fetchData() {
+  try {
+    const response = await fetch("http://localhost:3000/locations");
+    const json = await response.json();
+    json.forEach(data => dataList.push(data));
 
+    console.log(dataList); 
 
+    const provinceSelect = document.getElementById('provinceSelect');
+        const amphoeSelect = document.getElementById('amphoeSelect');
+        const districtSelect = document.getElementById('districtSelect');
+        const zipcodeInput = document.getElementById('zipcodeInput');
 
-showLoaderUi();
-fetch('https://fakestoreapi.com/products')
-            .then(res=>res.json())
-            .then(json=> {
-              items = json;
-              items.forEach(item => {
-                // console.log(item);
-                itemRow.append(createItemUi(item));
-              });
-              // Pointer Event None ဆိုရင် Bootstrap မှာ pe-none ပါသည်
-              removeLoaderUi();
-            });
+  // Function to populate select options without duplicates
+  function populateSelect(selectElement, dataArray, key) {
+      const uniqueValues = new Set(dataArray.map(item => item[key]));
+      selectElement.innerHTML = '<option value="">Select ' + key.charAt(0).toUpperCase() + key.slice(1) + '</option>';
+      uniqueValues.forEach(value => {
+          const option = document.createElement('option');
+          option.text = value;
+          option.value = value;
+          selectElement.add(option);
+      });
+  }
 
-            // window.addToCart = event => {
-            //   console.log("add to cart", event.target);
-            // }
+  // Populate Province Select
+  populateSelect(provinceSelect, dataList, 'province');
 
-  // Event Delegation
-  itemRow.addEventListener('click', e => {
-    if(e.target.classList.contains('add-cart')) {
-      addToCart(e);      
-    }
+  // Province Select change event
+  provinceSelect.addEventListener('change', function() {
+      amphoeSelect.innerHTML = '<option value="">Select Amphoe</option>';
+      districtSelect.innerHTML = '<option value="">Select District</option>';
+      zipcodeInput.value = '';
+      amphoeSelect.disabled = false;
+
+      const selectedProvince = this.value;
+      const filteredAmphoes = dataList.filter(location => location.province === selectedProvince);
+      populateSelect(amphoeSelect, filteredAmphoes, 'amphoe');
+  });
+
+  // Amphoe Select change event
+  amphoeSelect.addEventListener('change', function() {
+      districtSelect.innerHTML = '<option value="">Select District</option>';
+      zipcodeInput.value = '';
+      districtSelect.disabled = false;
+
+      const selectedAmphoe = this.value;
+      const filteredDistricts = dataList.filter(location => location.amphoe === selectedAmphoe);
+      populateSelect(districtSelect, filteredDistricts, 'district');
+  });
+
+  // District Select change event
+  districtSelect.addEventListener('change', function() {
+      const selectedDistrict = this.value;
+      const selectedLocation = dataList.find(location => location.district === selectedDistrict);
+      zipcodeInput.value = selectedLocation ? selectedLocation.zipcode : '';
   });
 
 
+  } catch (error) {
+      console.error("Error fetching data:", error);
+  }
+  }
+
+  fetchData();
   
-
-  printBtn.addEventListener('click', function() {
-    if(parseFloat(total.innerHTML) > 0) {
-      Swal.fire({
-        title: '?Are you sure',
-        text: "Wanna checkout all of these items",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#171717',
-        cancelButtonColor: '#d33',
-        confirmButtonText: '!Yes, I will'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire(
-            '!Congratulation',
-            'We will send you more details later.',
-            'success'
-          );
-
-          setTimeout(() => {
-             location.reload();
-          }, 2000);
-
-
-        }
-      })
-
-    }
-  });
-
-
-  // printBtn.addEventListener('animationend', _ => document.querySelector("#cartBox").remove());
-  
-
-//   export const printCost = function() {
-//   Swal.fire({
-//     title: 'Are you sure?',
-//     text: "You won't be able to revert this!",
-//     icon: 'warning',
-//     showCancelButton: true,
-//     confirmButtonColor: '#3085d6',
-//     cancelButtonColor: '#d33',
-//     confirmButtonText: 'Yes, delete it!'
-//   }).then((result) => {
-//     if (result.isConfirmed) {
-//       Swal.fire(
-//         'Deleted!',
-//         'Your file has been deleted.',
-//         'success'
-//       )
-//     }
-//   })
-// };
-  
+});

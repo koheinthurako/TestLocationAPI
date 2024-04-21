@@ -5,44 +5,35 @@
     <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Myshop Ecommerence Website</title>
+    <link rel="stylesheet" href="./style.css">
   </head>
   <body>
 
-    <header class="container d-flex bg-white sticky-top align-items-center justify-content-between shadow-sm rounded my-3 p-3 px-5">
-      <h4 class="fw-bold">My Shop</h4>
-      <button type="button" data-bs-toggle="offcanvas" data-bs-target="#showCart" class="btn btn-lg btn-primary position-relative animate__animated cart-btn">
-        <i class="bi bi-cart"></i>
-        Cart
-        <span class="cart-counter position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-          0
-        </span>
-      </button>
-    </header>
-    
-    <div class="container">
-      <div class="item-row g-4 row px-5 py-3 my-4">
-      </div>
-    </div>
+    <form class="container w-75 pt-5">
+      <div class="d-flex bg-white justify-content-center gap-2 align-items-center p-4 rounded-2 mt-5">
+        <section class="flex-fill">
+          <label for="province">Province:</label>
+          <select id="provinceSelect" class="form-select"></select>
+        </section>
 
-    <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="showCart" aria-labelledby="showCart">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="showCart">
-          <i class="bi bi-cart"></i> Your Cart <span class="badge bg-primary cart-number">0</span>
-        </h5>
-        <button type="button" class="btn-close ms-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div id="cartBox" class="offcanvas-body">
-        
-      </div>
-      <div class="offcanvas-footer border-top shadow p-3">
-        <div class="d-flex justify-content-between align-items-end mb-3">
-          <p class="mb-0">Total</p>
-          <h4 class="fw-bold">$ <span id="total">0</span></h4>
-        </div>
-        <button class="btn btn-lg btn-primary w-100 d-block printBtn">Check Out</button>
-      </div>
-    </div>
+        <section class="flex-fill">
+          <label for="amphoe">Amphoe:</label>
+          <select id="amphoeSelect" class="form-select" disabled></select>
+        </section>
 
-    <script type="module" src="/main.js"></script>
+        <section class="flex-fill">
+          <label for="district">District:</label>
+          <select id="districtSelect" class="form-select" disabled></select>
+        </section>
+
+        <section>
+          <label for="zipcode" class="form-label d-block">Postal Code:</label>
+          <input type="text" class="form-input" id="zipcodeInput" disabled>
+        </section>
+      </div>
+    </form>
+
+    <script type="module" src="./main.js"></script>
+
   </body>
 </html>
